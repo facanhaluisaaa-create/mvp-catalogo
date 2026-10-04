@@ -8,6 +8,8 @@ const CONFIG = {
   marca: {
     nome: "Brincar & Encantar",
     slogan: "Recreação, Spa Day Infantil e Oficinas Criativas",
+    // Foto grande da capa
+    fotoCapa: "img/capa.jpg",
     descricao:
       "Levamos diversão, cuidado e criatividade para festas, eventos e momentos especiais. Cada experiência é pensada com carinho para que as crianças brinquem, criem e se sintam únicas.",
   },
@@ -24,13 +26,25 @@ const CONFIG = {
   mensagemWhatsapp: "Olá! Vi o catálogo e gostaria de um orçamento para: {servico}",
 
   categorias: [
-    { id: "recreacao", nome: "Recreação", emoji: "🎈" },
-    { id: "spa", nome: "Spa Day Infantil", emoji: "🧖‍♀️" },
-    { id: "oficinas", nome: "Oficinas Criativas", emoji: "🎨" },
+    {
+      id: "recreacao",
+      nome: "Recreação",
+      descricao: "Brincadeiras que movimentam, unem e fazem a festa acontecer.",
+    },
+    {
+      id: "spa",
+      nome: "Spa Day Infantil",
+      descricao: "Momentos de cuidado e autoestima, com muito carinho e diversão.",
+    },
+    {
+      id: "oficinas",
+      nome: "Oficinas Criativas",
+      descricao: "Mãos na massa para criar, experimentar e levar a arte para casa.",
+    },
   ],
 
-  // foto: caminho da imagem (ex.: "img/recreacao-festa.jpg").
-  // Deixe "" para mostrar uma ilustração provisória.
+  // foto: caminho da imagem dentro da pasta img/ (ex.: "img/spa-day.jpg").
+  // As fotos atuais são apenas exemplos (Unsplash) — troque pelas fotos reais.
   servicos: [
     {
       categoria: "recreacao",
@@ -38,7 +52,7 @@ const CONFIG = {
       descricao:
         "Brincadeiras dirigidas, gincanas, dança e jogos cooperativos com recreadores animados.",
       detalhes: ["A partir de 2h", "1 recreador a cada 10 crianças", "De 3 a 12 anos"],
-      foto: "",
+      foto: "img/recreacao-festas.jpg",
     },
     {
       categoria: "recreacao",
@@ -46,7 +60,7 @@ const CONFIG = {
       descricao:
         "Pula-corda, amarelinha, corrida do saco e outras brincadeiras que atravessam gerações.",
       detalhes: ["Ideal para áreas externas", "Materiais inclusos"],
-      foto: "",
+      foto: "img/brincadeiras-classicas.jpg",
     },
     {
       categoria: "spa",
@@ -54,7 +68,7 @@ const CONFIG = {
       descricao:
         "Um dia de princesa (ou príncipe!) com máscara facial de frutas, pintura de unhas, penteados e roupões.",
       detalhes: ["Produtos infantis e seguros", "Kit roupão e tiara", "De 4 a 12 anos"],
-      foto: "",
+      foto: "img/spa-day.jpg",
     },
     {
       categoria: "spa",
@@ -62,7 +76,7 @@ const CONFIG = {
       descricao:
         "Cabaninhas, skincare divertido, escalda-pés e muita conversa para uma noite inesquecível.",
       detalhes: ["Montagem de cabanas", "Decoração temática"],
-      foto: "",
+      foto: "img/festa-pijama.jpg",
     },
     {
       categoria: "oficinas",
@@ -70,7 +84,7 @@ const CONFIG = {
       descricao:
         "As crianças criam o próprio slime com cores, glitter e aromas — e levam para casa.",
       detalhes: ["Materiais atóxicos", "Cada criança leva sua criação"],
-      foto: "",
+      foto: "img/oficina-slime.jpg",
     },
     {
       categoria: "oficinas",
@@ -78,7 +92,7 @@ const CONFIG = {
       descricao:
         "Pintura em tela, ecobag ou caneca. Uma lembrancinha feita pelas próprias mãos.",
       detalhes: ["Avental incluso", "Tema personalizável"],
-      foto: "",
+      foto: "img/pintura-artes.jpg",
     },
   ],
 

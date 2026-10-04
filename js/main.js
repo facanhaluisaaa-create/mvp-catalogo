@@ -19,8 +19,12 @@
   preencher("[data-marca-slogan]", marca.slogan);
   preencher("[data-marca-descricao]", marca.descricao);
   preencher("[data-insta-user]", "@" + contato.instagram);
-  preencher("[data-cidade]", "📍 " + contato.cidade);
+  preencher("[data-cidade]", contato.cidade);
   preencher("[data-ano]", new Date().getFullYear());
+
+  const capa = document.querySelector("[data-foto-capa]");
+  if (marca.fotoCapa) capa.src = marca.fotoCapa;
+  else capa.parentElement.classList.add("sem-foto");
 
   document.querySelectorAll("[data-whats-link]").forEach((a) => {
     a.href = linkWhats();
@@ -29,62 +33,85 @@
   });
   document.querySelectorAll("[data-insta-link]").forEach((a) => {
     a.href = `https://instagram.com/${contato.instagram}`;
+    a.target = "_blank";
+    a.rel = "noopener";
   });
 
-  // Filtros
-  const filtrosEl = document.querySelector("[data-filtros]");
-  const grade = document.querySelector("[data-servicos]");
-  const nomeCategoria = Object.fromEntries(categorias.map((c) => [c.id, c]));
-
-  const botoes = [{ id: "todos", nome: "Todos", emoji: "✨" }, ...categorias];
-  filtrosEl.innerHTML = botoes
-    .map(
-      (c, i) =>
-        `<button class="filtro${i === 0 ? " ativo" : ""}" data-cat="${c.id}" role="tab">${c.emoji} ${escapar(c.nome)}</button>`
-    )
+  // Atalhos para as categorias
+  document.querySelector("[data-atalhos]").innerHTML = categorias
+    .map((c) => `<a href="#${escapar(c.id)}">${escapar(c.nome)}</a>`)
     .join("");
 
-  filtrosEl.addEventListener("click", (e) => {
-    const btn = e.target.closest(".filtro");
-    if (!btn) return;
-    filtrosEl.querySelectorAll(".filtro").forEach((b) => b.classList.toggle("ativo", b === btn));
-    renderServicos(btn.dataset.cat);
-  });
+  // Uma seção por categoria, com os serviços em linhas alternadas
+  const foto = (s) =>
+    s.foto
+      ? `<img src="${escapar(s.foto)}" alt="${escapar(s.nome)}" loading="lazy" />`
+      : `<div class="servico__sem-foto">Adicione uma foto</div>`;
 
-  // Cards de serviços
-  function renderServicos(filtro = "todos") {
-    const lista = filtro === "todos" ? servicos : servicos.filter((s) => s.categoria === filtro);
-    grade.innerHTML = lista
-      .map((s) => {
-        const cat = nomeCategoria[s.categoria] || { nome: "", emoji: "✨" };
-        const foto = s.foto
-          ? `<img src="${escapar(s.foto)}" alt="${escapar(s.nome)}" loading="lazy" />`
-          : `<div class="card__placeholder"><span>${cat.emoji}</span><small>foto em breve</small></div>`;
-        const detalhes = (s.detalhes || []).map((d) => `<li>${escapar(d)}</li>`).join("");
-        return `
-          <article class="card card--${escapar(s.categoria)}">
-            <div class="card__foto">${foto}<span class="card__cat">${escapar(cat.nome)}</span></div>
-            <div class="card__corpo">
-              <h3>${escapar(s.nome)}</h3>
-              <p>${escapar(s.descricao)}</p>
-              ${detalhes ? `<ul class="card__detalhes">${detalhes}</ul>` : ""}
-              <a class="btn btn--whats btn--bloco" href="${linkWhats(s.nome)}" target="_blank" rel="noopener">Quero orçamento</a>
+  document.querySelector("[data-categorias]").innerHTML = categorias
+    .map((c, i) => {
+      const itens = servicos.filter((s) => s.categoria === c.id);
+      if (!itens.length) return "";
+      const numero = String(i + 1).padStart(2, "0");
+      return `
+        <section id="${escapar(c.id)}" class="secao categoria categoria--${escapar(c.id)}">
+          <div class="container">
+            <div class="cabecalho revelar">
+              <p class="sobretitulo">${numero} · ${escapar(c.nome)}</p>
+              <h2>${escapar(c.nome)}</h2>
+              ${c.descricao ? `<p class="cabecalho__texto">${escapar(c.descricao)}</p>` : ""}
             </div>
-          </article>`;
-      })
-      .join("");
-  }
-  renderServicos();
+            <div class="servicos">
+              ${itens
+                .map(
+                  (s) => `
+                <article class="servico revelar">
+                  <div class="servico__foto">${foto(s)}</div>
+                  <div class="servico__texto">
+                    <h3>${escapar(s.nome)}</h3>
+                    <p>${escapar(s.descricao)}</p>
+                    ${
+                      s.detalhes && s.detalhes.length
+                        ? `<ul class="servico__detalhes">${s.detalhes.map((d) => `<li>${escapar(d)}</li>`).join("")}</ul>`
+                        : ""
+                    }
+                    <a class="btn btn--primario" href="${linkWhats(s.nome)}" target="_blank" rel="noopener">Quero orçamento</a>
+                  </div>
+                </article>`
+                )
+                .join("")}
+            </div>
+          </div>
+        </section>`;
+    })
+    .join("");
 
   // Depoimentos
   document.querySelector("[data-depoimentos]").innerHTML = depoimentos
     .map(
       (d) => `
-      <figure class="depoimento">
+      <figure class="depoimento revelar">
         <div class="estrelas" aria-label="5 estrelas">★★★★★</div>
-        <blockquote>“${escapar(d.texto)}”</blockquote>
+        <blockquote>${escapar(d.texto)}</blockquote>
         <figcaption><strong>${escapar(d.nome)}</strong><span>${escapar(d.evento)}</span></figcaption>
       </figure>`
     )
     .join("");
+
+  // Aparecer suavemente ao rolar a página
+  const animar = "IntersectionObserver" in window && !matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (animar) {
+    document.documentElement.classList.add("animar");
+    const obs = new IntersectionObserver(
+      (entradas) =>
+        entradas.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("visivel");
+            obs.unobserve(e.target);
+          }
+        }),
+      { threshold: 0.12 }
+    );
+    document.querySelectorAll(".revelar").forEach((el) => obs.observe(el));
+  }
 })();
